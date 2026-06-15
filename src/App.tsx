@@ -10,6 +10,7 @@ import GrinderCategory from './pages/GrinderCategory';
 import AccessoryCategory from './pages/AccessoryCategory';
 import ProductDetail from './pages/ProductDetail';
 import Coffee from './pages/Coffee';
+import CoffeeDetail from './pages/CoffeeDetail';
 import Tea from './pages/Tea';
 import TeaDetail from './pages/TeaDetail';
 import Contact from './pages/Contact';
@@ -48,6 +49,7 @@ function AppContent() {
           <Route path="/accessories/hand-grinders" element={<AccessoryCategory />} />
           {/* Coffee & Tea */}
           <Route path="/coffee" element={<Coffee />} />
+          <Route path="/coffee/:slug" element={<CoffeeDetail />} />
           <Route path="/tea" element={<Tea />} />
           <Route path="/tea/:slug" element={<TeaDetail />} />
           <Route path="/contact" element={<Contact />} />
