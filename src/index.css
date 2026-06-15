@@ -59,6 +59,24 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes marqueeReverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-track-reverse {
+  animation: marqueeReverse 28s linear infinite;
+}
+
+.marquee-track-reverse:hover {
+  animation-play-state: paused;
+}
+
+@keyframes heroZoom {
+  0% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
 .noise-overlay {
   position: absolute;
   inset: 0;
@@ -144,9 +162,10 @@ body {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
-  border-bottom-color: #D97260 !important;
+  border-color: #D97260 !important;
 }
 
 .thumbnail-active {

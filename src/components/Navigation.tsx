@@ -240,6 +240,7 @@ export default function Navigation() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-salmon/0 group-hover/card:bg-salmon/55 transition-all duration-300" />
                       <div className="absolute bottom-0 left-0 p-4">
                         <h4 className="font-outfit text-white text-[16px] font-semibold leading-tight">
                           {sub.label}
