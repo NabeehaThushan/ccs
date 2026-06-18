@@ -132,25 +132,33 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Backdrop when dropdown open */}
+      {/* Backdrop */}
       {hasDropdown && (
         <div
-          className="fixed inset-0 z-[90] bg-nearblack/20 backdrop-blur-[2px]"
-          style={{ top: 69 }}
+          className="fixed inset-0 z-[90]"
+          style={{ top: 0 }}
           onClick={() => setActiveDropdown(null)}
         />
       )}
 
-      <nav
-        className={`fixed top-0 left-0 right-0 z-[100] bg-white transition-shadow duration-200 ${
-          scrolled ? 'shadow-sm' : ''
-        }`}
+      {/* Unified nav + dropdown — the whole thing becomes a salmon floating panel when dropdown is open */}
+      <div
+        className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300"
+        style={{
+          borderBottomLeftRadius: hasDropdown ? 28 : 0,
+          borderBottomRightRadius: hasDropdown ? 28 : 0,
+          background: hasDropdown ? '#FDE8E3' : 'white',
+          boxShadow: hasDropdown
+            ? '0 24px 60px rgba(217,114,96,0.18), 0 4px 12px rgba(217,114,96,0.08)'
+            : scrolled ? '0 1px 0 #E8E5E0' : 'none',
+          transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+        }}
       >
-        {/* Bar */}
+        {/* Nav bar row */}
         <div className="max-w-[1200px] mx-auto px-6 md:px-10 flex items-center justify-between h-[68px]">
           <Link
             to="/"
-            className="font-outfit text-[17px] font-semibold tracking-tight text-nearblack hover:text-salmon transition-colors duration-200"
+            className="font-outfit text-[17px] font-semibold tracking-tight text-nearblack hover:text-salmon transition-colors duration-200 z-10 relative"
           >
             Coffee Concept Store
           </Link>
@@ -180,7 +188,7 @@ export default function Navigation() {
                     to={item.mainPath!}
                     className={`flex items-center gap-1 font-dm text-[13px] px-3.5 py-2 rounded-full transition-colors duration-200 ${
                       activeDropdown === item.label || location.pathname.startsWith(item.mainPath!)
-                        ? 'text-salmon'
+                        ? 'text-salmon font-medium'
                         : 'text-nearblack/65 hover:text-salmon'
                     }`}
                   >
@@ -199,32 +207,31 @@ export default function Navigation() {
 
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden p-2 -mr-2 rounded-full hover:bg-stone transition-colors"
+            className="lg:hidden p-2 -mr-2 rounded-full hover:bg-black/5 transition-colors"
             onClick={() => setMobileOpen(true)}
           >
             <Menu size={22} className="text-nearblack" strokeWidth={1.5} />
           </button>
         </div>
 
-        {/* Bottom border */}
-        <div className="h-px bg-stone mx-6 md:mx-10" />
+        {/* Bottom border (only when no dropdown) */}
+        {!hasDropdown && (
+          <div className="h-px bg-stone mx-6 md:mx-10" />
+        )}
 
-        {/* Dropdown panel */}
+        {/* Dropdown panel — inside the same salmon container */}
         <div
-          className="absolute top-[calc(100%-1px)] left-0 right-0 bg-white shadow-2xl overflow-hidden transition-all duration-300"
+          className="overflow-hidden transition-all duration-300"
           style={{
+            maxHeight: hasDropdown ? 600 : 0,
             opacity: hasDropdown ? 1 : 0,
-            transform: hasDropdown ? 'translateY(0)' : 'translateY(-6px)',
-            pointerEvents: hasDropdown ? 'auto' : 'none',
-            borderBottomLeftRadius: 28,
-            borderBottomRightRadius: 28,
             transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
           onMouseEnter={() => activeDropdown ? openDropdown(activeDropdown) : undefined}
           onMouseLeave={scheduleClose}
         >
-          {/* Salmon accent stripe */}
-          <div className="h-[3px] bg-salmon" />
+          {/* Thin salmon accent stripe at the top of the cards area */}
+          <div className="h-px bg-salmon/20 mx-6 md:mx-10" />
 
           <div className="max-w-[1200px] mx-auto px-6 md:px-10 py-8">
             {NAV.filter((n) => n.dropdown).map((item) => (
@@ -232,41 +239,45 @@ export default function Navigation() {
                 key={item.label}
                 className={activeDropdown === item.label ? 'block' : 'hidden'}
               >
-                <div className="flex gap-5 flex-wrap">
+                {/* Active category label */}
+                <p className="font-dm text-[11px] uppercase tracking-[3px] text-salmon mb-5">
+                  {item.label}
+                </p>
+                <div className="flex gap-4 flex-wrap">
                   {item.dropdown!.map((sub) => (
                     <Link
                       key={sub.path}
                       to={sub.path}
                       className="group/card block rounded-2xl overflow-hidden relative flex-shrink-0"
-                      style={{ width: 200, height: 260 }}
+                      style={{ width: 190, height: 255 }}
                     >
                       <img
                         src={sub.image}
                         alt={sub.label}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                       <div className="absolute inset-0 bg-salmon/0 group-hover/card:bg-salmon/45 transition-all duration-300" />
                       <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h4 className="font-outfit text-white text-[17px] font-semibold leading-tight mb-1">
+                        <h4 className="font-outfit text-white text-[16px] font-semibold leading-tight mb-1">
                           {sub.label}
                         </h4>
-                        <p className="font-dm text-white/65 text-[12px] leading-tight mb-3">
+                        <p className="font-dm text-white/65 text-[12px] leading-tight mb-2.5">
                           {sub.description}
                         </p>
-                        <span className="font-dm text-white/55 text-[11px] uppercase tracking-[2px] inline-flex items-center gap-1 group-hover/card:text-white transition-colors duration-200">
+                        <span className="font-dm text-[11px] uppercase tracking-[2px] text-white/50 group-hover/card:text-white inline-flex items-center gap-1 transition-colors duration-200">
                           Explore <span className="text-salmon group-hover/card:text-white">→</span>
                         </span>
                       </div>
                     </Link>
                   ))}
-                  {/* View all link */}
-                  <div className="flex flex-col justify-end pb-4 pl-2">
+                  {/* View all */}
+                  <div className="flex flex-col justify-end pb-2 pl-1">
                     <Link
                       to={item.mainPath!}
-                      className="font-dm text-[12px] uppercase tracking-[2px] text-nearblack/50 hover:text-salmon transition-colors duration-200 flex items-center gap-2"
+                      className="font-dm text-[12px] uppercase tracking-[2px] text-salmon/70 hover:text-salmon transition-colors duration-200 flex items-center gap-1.5"
                     >
-                      View All {item.label} →
+                      View All →
                     </Link>
                   </div>
                 </div>
@@ -274,7 +285,7 @@ export default function Navigation() {
             ))}
           </div>
         </div>
-      </nav>
+      </div>
 
       {/* Mobile fullscreen menu */}
       <div

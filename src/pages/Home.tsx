@@ -518,48 +518,92 @@ export default function Home() {
       </section>
 
       {/* ─── EDITORIAL SECTION ────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-nearblack" style={{ minHeight: 600 }}>
-        {/* Background image fills right side visually */}
-        <img
-          src="https://images.unsplash.com/photo-1511920121047-6b38ba6c8480?w=1400&q=80"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Left-to-right gradient: covers text area in dark, fades to transparent on right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-nearblack via-nearblack/85 to-nearblack/30 md:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-nearblack/40 to-transparent" />
-        {/* Noise texture */}
-        <div className="noise-overlay" />
+      <section className="bg-nearblack overflow-hidden">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[640px]">
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-36">
-          <ScrollReveal>
-            <div className="max-w-[620px]">
-              <p className="font-dm text-[11px] uppercase tracking-[5px] text-salmon mb-6">The Engineering of Extraction</p>
-              <h2
-                className="font-outfit font-bold text-white leading-[1.0] mb-8"
-                style={{ fontSize: 'clamp(40px, 5.5vw, 76px)', letterSpacing: '-0.03em' }}
+            {/* Left: text panel */}
+            <div className="px-6 md:px-10 lg:px-16 py-20 md:py-28 flex flex-col justify-between relative">
+              {/* Big decorative background number */}
+              <div
+                className="absolute -top-6 -left-4 font-outfit font-bold text-white/[0.03] select-none pointer-events-none leading-none"
+                style={{ fontSize: 'clamp(200px, 28vw, 360px)', letterSpacing: '-0.05em' }}
+                aria-hidden
               >
-                Every variable<br />matters.
-              </h2>
-              <p className="font-dm text-[15px] md:text-[16px] text-white/55 leading-[1.8] mb-12 max-w-[480px]">
-                Nine bars of pressure. Ninety-three degrees. Twenty-five seconds. The physics of a perfect espresso are unforgiving — and that's precisely what makes the equipment so important.
-              </p>
+                9
+              </div>
 
-              {/* Editorial stats strip */}
-              <div className="flex flex-wrap gap-8">
-                {[
-                  { value: '9 bar', label: 'Extraction pressure' },
-                  { value: '93°C', label: 'Brew temperature' },
-                  { value: '25s', label: 'Ideal shot time' },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <p className="font-outfit font-bold text-[28px] md:text-[34px] text-salmon leading-none">{stat.value}</p>
-                    <p className="font-dm text-[11px] uppercase tracking-[2px] text-white/40 mt-1">{stat.label}</p>
-                  </div>
-                ))}
+              <ScrollReveal className="relative z-10">
+                <p className="font-dm text-[11px] uppercase tracking-[5px] text-salmon mb-6">The Engineering of Extraction</p>
+                <h2
+                  className="font-outfit font-bold text-white leading-[1.0] mb-7"
+                  style={{ fontSize: 'clamp(36px, 4.5vw, 64px)', letterSpacing: '-0.03em' }}
+                >
+                  Every variable<br />matters.
+                </h2>
+                <p className="font-dm text-[15px] text-white/50 leading-[1.8] max-w-[440px]">
+                  Nine bars of pressure. Ninety-three degrees. Twenty-five seconds. The physics of a perfect espresso are unforgiving — and that's precisely what makes the equipment so important.
+                </p>
+              </ScrollReveal>
+
+              {/* Stats — anchored to the bottom */}
+              <ScrollReveal delay={120} className="relative z-10 mt-14">
+                <div className="grid grid-cols-3 gap-0 border border-white/10 rounded-2xl overflow-hidden">
+                  {[
+                    { value: '9 bar', label: 'Pressure' },
+                    { value: '93°C', label: 'Temperature' },
+                    { value: '25 sec', label: 'Shot time' },
+                  ].map((stat, i) => (
+                    <div
+                      key={stat.label}
+                      className={`px-5 py-5 ${i !== 2 ? 'border-r border-white/10' : ''}`}
+                    >
+                      <p className="font-outfit font-bold text-salmon leading-none mb-1.5"
+                        style={{ fontSize: 'clamp(22px, 2.5vw, 30px)' }}
+                      >
+                        {stat.value}
+                      </p>
+                      <p className="font-dm text-[11px] uppercase tracking-[2px] text-white/35">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </ScrollReveal>
+            </div>
+
+            {/* Right: image collage */}
+            <div className="hidden lg:grid grid-rows-2 gap-3 p-3 pl-0" style={{ minHeight: 640 }}>
+              <ScrollReveal className="overflow-hidden rounded-2xl relative">
+                <img
+                  src="https://images.unsplash.com/photo-1511920121047-6b38ba6c8480?w=800&q=80"
+                  alt="Espresso extraction"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-nearblack/50 to-transparent" />
+                <span className="absolute bottom-4 left-4 font-dm text-[11px] uppercase tracking-[3px] text-white/50">Extraction</span>
+              </ScrollReveal>
+              <div className="grid grid-cols-2 gap-3">
+                <ScrollReveal delay={80} className="overflow-hidden rounded-2xl relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1495474472287-4d23bc958e23?w=600&q=80"
+                    alt="Coffee grinder"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-nearblack/60 to-transparent" />
+                  <span className="absolute bottom-4 left-4 font-dm text-[11px] uppercase tracking-[3px] text-white/50">Grind</span>
+                </ScrollReveal>
+                <ScrollReveal delay={140} className="overflow-hidden rounded-2xl relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1510708287695-0b2a7037ef0d?w=600&q=80"
+                    alt="Espresso machine"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-nearblack/60 to-transparent" />
+                  <span className="absolute bottom-4 left-4 font-dm text-[11px] uppercase tracking-[3px] text-white/50">Machine</span>
+                </ScrollReveal>
               </div>
             </div>
-          </ScrollReveal>
+
+          </div>
         </div>
       </section>
 
