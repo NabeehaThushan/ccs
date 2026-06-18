@@ -517,52 +517,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── VIDEO EDITORIAL ─────────────────────────────────────────────── */}
-      <section className="bg-offwhite py-20 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-          <ScrollReveal>
-            <p className="font-dm text-[11px] uppercase tracking-[4px] text-salmon mb-3">The Engineering of Extraction</p>
-            <h2 className="font-outfit font-bold text-[38px] md:text-[56px] text-nearblack leading-tight mb-6" style={{ letterSpacing: '-0.02em' }}>
-              Every variable matters.<br />Every second counts.
-            </h2>
-            <p className="font-dm text-[16px] text-nearblack/60 max-w-[560px] leading-[1.7] mb-14">
-              A three-minute journey through the physics of the perfect espresso — pressure, temperature, and the geometry of the burr.
-            </p>
-          </ScrollReveal>
+      {/* ─── EDITORIAL SECTION ────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-nearblack" style={{ minHeight: 600 }}>
+        {/* Background image fills right side visually */}
+        <img
+          src="https://images.unsplash.com/photo-1511920121047-6b38ba6c8480?w=1400&q=80"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Left-to-right gradient: covers text area in dark, fades to transparent on right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-nearblack via-nearblack/85 to-nearblack/30 md:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-nearblack/40 to-transparent" />
+        {/* Noise texture */}
+        <div className="noise-overlay" />
 
-          {/* Custom video player */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-36">
           <ScrollReveal>
-            <div className="relative rounded-3xl overflow-hidden bg-nearblack" style={{ aspectRatio: '16/9' }}>
-              {/* Placeholder video image */}
-              <img
-                src="https://images.unsplash.com/photo-1511920121047-6b38ba6c8480?w=1400&q=80"
-                alt="Coffee extraction video"
-                className="w-full h-full object-cover opacity-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-nearblack/60 via-transparent to-nearblack/20" />
+            <div className="max-w-[620px]">
+              <p className="font-dm text-[11px] uppercase tracking-[5px] text-salmon mb-6">The Engineering of Extraction</p>
+              <h2
+                className="font-outfit font-bold text-white leading-[1.0] mb-8"
+                style={{ fontSize: 'clamp(40px, 5.5vw, 76px)', letterSpacing: '-0.03em' }}
+              >
+                Every variable<br />matters.
+              </h2>
+              <p className="font-dm text-[15px] md:text-[16px] text-white/55 leading-[1.8] mb-12 max-w-[480px]">
+                Nine bars of pressure. Ninety-three degrees. Twenty-five seconds. The physics of a perfect espresso are unforgiving — and that's precisely what makes the equipment so important.
+              </p>
 
-              {/* Play button */}
-              <button className="absolute inset-0 flex items-center justify-center group">
-                <div className="relative">
-                  {/* Outer ring animation */}
-                  <div className="absolute inset-0 rounded-full bg-salmon/20 scale-[1.3] group-hover:scale-[1.5] transition-transform duration-500" />
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-salmon flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-2xl">
-                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" style={{ borderLeftWidth: 22 }} />
+              {/* Editorial stats strip */}
+              <div className="flex flex-wrap gap-8">
+                {[
+                  { value: '9 bar', label: 'Extraction pressure' },
+                  { value: '93°C', label: 'Brew temperature' },
+                  { value: '25s', label: 'Ideal shot time' },
+                ].map((stat) => (
+                  <div key={stat.label}>
+                    <p className="font-outfit font-bold text-[28px] md:text-[34px] text-salmon leading-none">{stat.value}</p>
+                    <p className="font-dm text-[11px] uppercase tracking-[2px] text-white/40 mt-1">{stat.label}</p>
                   </div>
-                </div>
-              </button>
-
-              {/* Bottom info bar */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 flex items-end justify-between gap-6">
-                <div>
-                  <p className="font-dm text-[11px] uppercase tracking-[3px] text-salmon mb-1">Now Playing</p>
-                  <h3 className="font-outfit font-semibold text-[20px] md:text-[24px] text-white">The Extraction Equation</h3>
-                  <p className="font-dm text-[13px] text-white/50 mt-1">Duration: 3:14</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-salmon animate-pulse" />
-                  <span className="font-dm text-[11px] uppercase tracking-[2px] text-white/60">Press to Play</span>
-                </div>
+                ))}
               </div>
             </div>
           </ScrollReveal>

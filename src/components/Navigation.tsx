@@ -12,12 +12,14 @@ interface DropdownItem {
 interface NavItem {
   label: string;
   path?: string;
+  mainPath?: string;
   dropdown?: DropdownItem[];
 }
 
 const NAV: NavItem[] = [
   {
     label: 'Coffee Machines',
+    mainPath: '/machines',
     dropdown: [
       {
         label: 'Commercial',
@@ -41,6 +43,7 @@ const NAV: NavItem[] = [
   },
   {
     label: 'Grinders',
+    mainPath: '/grinders',
     dropdown: [
       {
         label: 'On Demand',
@@ -58,6 +61,7 @@ const NAV: NavItem[] = [
   },
   {
     label: 'Accessories',
+    mainPath: '/accessories',
     dropdown: [
       {
         label: 'Tampers',
@@ -132,7 +136,7 @@ export default function Navigation() {
       {hasDropdown && (
         <div
           className="fixed inset-0 z-[90] bg-nearblack/20 backdrop-blur-[2px]"
-          style={{ top: 68 }}
+          style={{ top: 69 }}
           onClick={() => setActiveDropdown(null)}
         />
       )}
@@ -172,9 +176,10 @@ export default function Navigation() {
                   onMouseEnter={() => openDropdown(item.label)}
                   onMouseLeave={scheduleClose}
                 >
-                  <button
+                  <Link
+                    to={item.mainPath!}
                     className={`flex items-center gap-1 font-dm text-[13px] px-3.5 py-2 rounded-full transition-colors duration-200 ${
-                      activeDropdown === item.label
+                      activeDropdown === item.label || location.pathname.startsWith(item.mainPath!)
                         ? 'text-salmon'
                         : 'text-nearblack/65 hover:text-salmon'
                     }`}
@@ -186,7 +191,7 @@ export default function Navigation() {
                         activeDropdown === item.label ? 'rotate-180 text-salmon' : ''
                       }`}
                     />
-                  </button>
+                  </Link>
                 </div>
               )
             )}
@@ -204,95 +209,69 @@ export default function Navigation() {
         {/* Bottom border */}
         <div className="h-px bg-stone mx-6 md:mx-10" />
 
-        {/* Dropdown panel - extends up to cover nav */}
+        {/* Dropdown panel */}
         <div
-          className={`absolute left-0 right-0 bg-white shadow-2xl overflow-hidden transition-all duration-300`}
+          className="absolute top-[calc(100%-1px)] left-0 right-0 bg-white shadow-2xl overflow-hidden transition-all duration-300"
           style={{
-            top: hasDropdown ? 0 : 68,
             opacity: hasDropdown ? 1 : 0,
-            transform: hasDropdown ? 'translateY(0)' : 'translateY(-8px)',
+            transform: hasDropdown ? 'translateY(0)' : 'translateY(-6px)',
             pointerEvents: hasDropdown ? 'auto' : 'none',
-            borderBottomLeftRadius: 32,
-            borderBottomRightRadius: 32,
+            borderBottomLeftRadius: 28,
+            borderBottomRightRadius: 28,
             transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
           onMouseEnter={() => activeDropdown ? openDropdown(activeDropdown) : undefined}
           onMouseLeave={scheduleClose}
         >
-          <div className="max-w-[1200px] mx-auto px-6 md:px-10">
-            {/* Re-render nav row for visual continuity under dropdown */}
-            <div className="h-[68px] flex items-center justify-end">
-              <div className="hidden lg:flex items-center">
-                {NAV.map((item) =>
-                  item.path ? (
-                    <div key={item.label} className="font-dm text-[13px] px-3.5 py-2 text-nearblack/40">
-                      {item.label}
-                    </div>
-                  ) : (
-                    <div key={item.label}>
-                      <button
-                        className={`flex items-center gap-1 font-dm text-[13px] px-3.5 py-2 rounded-full transition-colors duration-200 ${
-                          activeDropdown === item.label
-                            ? 'text-salmon'
-                            : 'text-nearblack/40'
-                        }`}
-                      >
-                        {item.label}
-                        <ChevronDown
-                          size={12}
-                          className={`transition-transform duration-200 ${
-                            activeDropdown === item.label ? 'rotate-180 text-salmon' : ''
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
+          {/* Salmon accent stripe */}
+          <div className="h-[3px] bg-salmon" />
 
-            {/* Salmon accent stripe */}
-            <div className="h-[3px] bg-salmon" />
-
-            {/* Category cards */}
-            <div className="py-10">
-              {NAV.filter((n) => n.dropdown).map((item) => (
-                <div
-                  key={item.label}
-                  className={activeDropdown === item.label ? 'block' : 'hidden'}
-                >
-                  <div className="flex gap-5 justify-center flex-wrap">
-                    {item.dropdown!.map((sub) => (
-                      <Link
-                        key={sub.path}
-                        to={sub.path}
-                        className="group/card block rounded-2xl overflow-hidden relative flex-shrink-0"
-                        style={{ width: 220, height: 290 }}
-                      >
-                        <img
-                          src={sub.image}
-                          alt={sub.label}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                        <div className="absolute inset-0 bg-salmon/0 group-hover/card:bg-salmon/50 transition-all duration-300" />
-                        <div className="absolute bottom-0 left-0 right-0 p-5">
-                          <h4 className="font-outfit text-white text-[18px] font-semibold leading-tight mb-1">
-                            {sub.label}
-                          </h4>
-                          <p className="font-dm text-white/70 text-[13px] leading-tight mb-3">
-                            {sub.description}
-                          </p>
-                          <span className="font-dm text-white/60 text-[11px] uppercase tracking-[2px] inline-flex items-center gap-1 group-hover/card:text-white transition-colors duration-200">
-                            Explore <span className="text-salmon group-hover/card:text-white">→</span>
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
+          <div className="max-w-[1200px] mx-auto px-6 md:px-10 py-8">
+            {NAV.filter((n) => n.dropdown).map((item) => (
+              <div
+                key={item.label}
+                className={activeDropdown === item.label ? 'block' : 'hidden'}
+              >
+                <div className="flex gap-5 flex-wrap">
+                  {item.dropdown!.map((sub) => (
+                    <Link
+                      key={sub.path}
+                      to={sub.path}
+                      className="group/card block rounded-2xl overflow-hidden relative flex-shrink-0"
+                      style={{ width: 200, height: 260 }}
+                    >
+                      <img
+                        src={sub.image}
+                        alt={sub.label}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                      <div className="absolute inset-0 bg-salmon/0 group-hover/card:bg-salmon/45 transition-all duration-300" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h4 className="font-outfit text-white text-[17px] font-semibold leading-tight mb-1">
+                          {sub.label}
+                        </h4>
+                        <p className="font-dm text-white/65 text-[12px] leading-tight mb-3">
+                          {sub.description}
+                        </p>
+                        <span className="font-dm text-white/55 text-[11px] uppercase tracking-[2px] inline-flex items-center gap-1 group-hover/card:text-white transition-colors duration-200">
+                          Explore <span className="text-salmon group-hover/card:text-white">→</span>
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                  {/* View all link */}
+                  <div className="flex flex-col justify-end pb-4 pl-2">
+                    <Link
+                      to={item.mainPath!}
+                      className="font-dm text-[12px] uppercase tracking-[2px] text-nearblack/50 hover:text-salmon transition-colors duration-200 flex items-center gap-2"
+                    >
+                      View All {item.label} →
+                    </Link>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </nav>
@@ -364,6 +343,14 @@ export default function Navigation() {
                       }`}
                     >
                       <div className="space-y-1">
+                        <Link
+                          to={item.mainPath!}
+                          className="flex items-center justify-between py-3 px-4 rounded-xl bg-salmon/20 border border-salmon/30 transition-all duration-200"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          <p className="font-dm text-[15px] text-white font-medium">View All {item.label}</p>
+                          <span className="text-salmon text-sm ml-4">→</span>
+                        </Link>
                         {item.dropdown!.map((sub) => (
                           <Link
                             key={sub.path}
