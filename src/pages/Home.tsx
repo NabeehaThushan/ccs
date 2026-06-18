@@ -1,7 +1,41 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal';
 
 const BRANDS = ['GEMILAI', 'T&Z', 'BALENARE', 'WENDOUGEE', 'KAPHIE', 'BLUE TRAIL'];
+
+const HERO_CATEGORIES = [
+  {
+    label: 'Machines',
+    path: '/machines',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d23bc958e23?w=1600&q=80',
+    tagline: 'Precision Engineering',
+  },
+  {
+    label: 'Grinders',
+    path: '/grinders',
+    image: 'https://images.unsplash.com/photo-1516962393444-4e6e0f6f4e28?w=1600&q=80',
+    tagline: 'Burr Geometry Perfected',
+  },
+  {
+    label: 'Accessories',
+    path: '/accessories',
+    image: 'https://images.unsplash.com/photo-1514554595789-096f822a3d8b?w=1600&q=80',
+    tagline: 'Tools of the Ritual',
+  },
+  {
+    label: 'Coffee',
+    path: '/coffee',
+    image: 'https://images.unsplash.com/photo-1447933601403-0b6687b8e018?w=1600&q=80',
+    tagline: 'Single Origin Excellence',
+  },
+  {
+    label: 'Tea',
+    path: '/tea',
+    image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=1600&q=80',
+    tagline: 'Still. Steeped. Considered.',
+  },
+];
 
 const SLOGANS = [
   'PRECISION · RITUAL · OBSESSION',
@@ -51,23 +85,82 @@ const COFFEE_HISTORY = [
 ];
 
 const WHAT_WE_CARRY = [
-  { label: 'Coffee Machines', sub: 'Commercial · Multi-Use · Home', path: '/machines' },
-  { label: 'Grinders', sub: 'On Demand · Single Dose', path: '/grinders' },
-  { label: 'Accessories', sub: 'Tampers · Cups · Scales', path: '/accessories' },
+  {
+    label: 'Coffee Machines',
+    sub: 'Commercial · Multi-Use · Home',
+    path: '/machines',
+    subcategories: [
+      { name: 'Commercial', path: '/machines/commercial' },
+      { name: 'Multi-Use', path: '/machines/multi-use' },
+      { name: 'Home', path: '/machines/home' },
+    ],
+  },
+  {
+    label: 'Grinders',
+    sub: 'On Demand · Single Dose',
+    path: '/grinders',
+    subcategories: [
+      { name: 'On Demand', path: '/grinders/on-demand' },
+      { name: 'Single Dose', path: '/grinders/single-dose' },
+    ],
+  },
+  {
+    label: 'Accessories',
+    sub: 'Tampers · Cups · Scales',
+    path: '/accessories',
+    subcategories: [
+      { name: 'Tampers', path: '/accessories/tampers' },
+      { name: 'Cups', path: '/accessories/cups' },
+      { name: 'Scales', path: '/accessories/scales' },
+      { name: 'Hand Grinders', path: '/accessories/hand-grinders' },
+    ],
+  },
   { label: 'Kaphie Coffee', sub: 'Single Origin Beans', path: '/coffee' },
   { label: 'Blue Trail Tea', sub: '8 Signature Blends', path: '/tea' },
 ];
 
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActiveCategory((prev) => (prev + 1) % HERO_CATEGORIES.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCategoryClick = (index: number) => {
+    if (index !== activeCategory) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActiveCategory(index);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
+  const currentHero = HERO_CATEGORIES[activeCategory];
+
   return (
     <div>
       {/* ─── HERO ─────────────────────────────────────────────────────── */}
       <section className="relative h-screen flex flex-col justify-end overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1495474472287-4d23bc958e23?w=1600&q=80"
-          alt="Coffee machine hero"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {/* Background images with crossfade */}
+        {HERO_CATEGORIES.map((cat, i) => (
+          <img
+            key={cat.label}
+            src={cat.image}
+            alt={cat.label}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              i === activeCategory ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-t from-nearblack/85 via-nearblack/25 to-nearblack/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-nearblack/50 via-transparent to-transparent" />
 
@@ -78,8 +171,28 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 pb-20 md:pb-28 w-full">
-          <p className="font-dm text-[11px] uppercase tracking-[5px] text-salmon mb-5">
-            Sri Lanka's Premier Coffee Destination
+          {/* Category switcher tabs */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {HERO_CATEGORIES.map((cat, i) => (
+              <button
+                key={cat.label}
+                onClick={() => handleCategoryClick(i)}
+                className={`font-dm text-[11px] uppercase tracking-[2px] px-5 py-2.5 rounded-full transition-all duration-300 ${
+                  i === activeCategory
+                    ? 'bg-salmon text-white'
+                    : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Dynamic content */}
+          <p className={`font-dm text-[11px] uppercase tracking-[5px] text-salmon mb-5 transition-opacity duration-300 ${
+            isTransitioning ? 'opacity-0' : 'opacity-100'
+          }`}>
+            {currentHero.tagline}
           </p>
           <h1
             className="font-outfit font-bold text-white leading-[1.0] mb-8"
@@ -90,10 +203,10 @@ export default function Home() {
           </h1>
           <div className="flex flex-wrap gap-4 items-center">
             <Link
-              to="/machines"
+              to={currentHero.path}
               className="inline-flex items-center gap-3 bg-salmon text-white font-dm text-[12px] uppercase tracking-[2px] px-8 py-4 rounded-full hover:bg-white hover:text-salmon transition-all duration-300"
             >
-              Explore Machines
+              Explore {currentHero.label}
             </Link>
             <Link
               to="/contact"
@@ -135,36 +248,68 @@ export default function Home() {
       </section>
 
       {/* ─── ABOUT ────────────────────────────────────────────────────── */}
-      <section className="bg-offwhite py-20 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
-            <ScrollReveal className="md:col-span-5">
-              <div className="inline-block bg-salmon text-white font-dm text-[11px] uppercase tracking-[3px] px-4 py-2 rounded-full mb-6">
-                Who We Are
-              </div>
-              <h2 className="font-outfit font-bold text-[38px] md:text-[52px] text-nearblack leading-[1.1]" style={{ letterSpacing: '-0.02em' }}>
-                A curated showroom for those who take coffee seriously.
-              </h2>
-            </ScrollReveal>
-            <ScrollReveal delay={120} className="md:col-span-7 md:pt-4">
-              <div className="space-y-5 max-w-[560px]">
-                <p className="font-dm text-[16px] text-nearblack/75 leading-[1.7]">
-                  Coffee Concept Store is a destination, not a marketplace. Every machine, grinder, and accessory has been selected for engineering integrity and the capacity to reward daily use for decades.
-                </p>
-                <p className="font-dm text-[16px] text-nearblack/75 leading-[1.7]">
-                  We represent brands that share our conviction — the best coffee equipment is not the most expensive, but the most honest. No gimmicks. No trends. Just tools built by people who understand that extraction is a discipline.
-                </p>
-                <div className="flex flex-wrap gap-4 pt-4">
+      <section className="bg-offwhite py-20 md:py-32 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-0 w-96 h-96 bg-salmon/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-salmon/5 rounded-full blur-2xl" />
+
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Logo + Title column */}
+            <ScrollReveal className="lg:col-span-5">
+              <div className="relative">
+                {/* Logo mark */}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-salmon flex items-center justify-center">
+                    <span className="font-outfit font-bold text-[28px] md:text-[32px] text-white">C</span>
+                  </div>
+                  <div>
+                    <p className="font-outfit font-semibold text-[18px] text-nearblack leading-tight">Coffee Concept</p>
+                    <p className="font-outfit font-semibold text-[18px] text-salmon leading-tight">Store</p>
+                  </div>
+                </div>
+
+                <div className="inline-block bg-salmon text-white font-dm text-[11px] uppercase tracking-[3px] px-4 py-2 rounded-full mb-6">
+                  Who We Are
+                </div>
+                <h2 className="font-outfit font-bold text-[38px] md:text-[52px] text-nearblack leading-[1.1]" style={{ letterSpacing: '-0.02em' }}>
+                  A curated showroom for those who take coffee seriously.
+                </h2>
+
+                {/* Stats row */}
+                <div className="flex flex-wrap gap-4 mt-8">
                   {[
                     { n: '6+', l: 'Brands' },
                     { n: '20+', l: 'Products' },
                     { n: '01', l: 'Obsession' },
                   ].map((stat) => (
-                    <div key={stat.l} className="bg-salmon/10 border border-salmon/20 rounded-2xl px-6 py-4 text-center">
+                    <div key={stat.l} className="bg-white border border-stone rounded-2xl px-6 py-4 text-center shadow-sm">
                       <p className="font-outfit font-bold text-[32px] text-salmon leading-none">{stat.n}</p>
                       <p className="font-dm text-[11px] uppercase tracking-[2px] text-nearblack/50 mt-1">{stat.l}</p>
                     </div>
                   ))}
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Description column */}
+            <ScrollReveal delay={120} className="lg:col-span-7">
+              <div className="relative bg-white rounded-3xl border border-stone p-8 md:p-12 shadow-sm">
+                {/* Quote mark decoration */}
+                <div className="absolute -top-4 left-8 w-10 h-10 rounded-full bg-salmon flex items-center justify-center">
+                  <span className="font-outfit text-white text-[24px]">"</span>
+                </div>
+                <div className="space-y-5">
+                  <p className="font-dm text-[16px] md:text-[17px] text-nearblack/75 leading-[1.75] mt-4">
+                    Coffee Concept Store is a destination, not a marketplace. Every machine, grinder, and accessory has been selected for engineering integrity and the capacity to reward daily use for decades.
+                  </p>
+                  <p className="font-dm text-[16px] md:text-[17px] text-nearblack/75 leading-[1.75]">
+                    We represent brands that share our conviction — the best coffee equipment is not the most expensive, but the most honest. No gimmicks. No trends. Just tools built by people who understand that extraction is a discipline.
+                  </p>
+                  <div className="pt-6 border-t border-stone">
+                    <p className="font-outfit font-semibold text-[15px] text-nearblack">The Coffee Concept Team</p>
+                    <p className="font-dm text-[13px] text-midtone mt-1">Colombo, Sri Lanka</p>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
@@ -184,16 +329,32 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {WHAT_WE_CARRY.map((item, i) => (
               <ScrollReveal key={item.label} delay={i * 60}>
-                <Link
-                  to={item.path}
-                  className="group block bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-salmon hover:border-salmon transition-all duration-300"
-                >
-                  <h3 className="font-outfit font-semibold text-[16px] text-white mb-2 leading-tight group-hover:text-white transition-colors">{item.label}</h3>
-                  <p className="font-dm text-[12px] text-white/40 group-hover:text-white/80 transition-colors leading-[1.5] mb-4">{item.sub}</p>
-                  <span className="font-dm text-[11px] uppercase tracking-[2px] text-salmon group-hover:text-white inline-flex items-center gap-1 transition-colors duration-300">
-                    Explore →
-                  </span>
-                </Link>
+                <div className="group relative">
+                  <Link
+                    to={item.path}
+                    className="block bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-salmon hover:border-salmon transition-all duration-300"
+                  >
+                    <h3 className="font-outfit font-semibold text-[16px] text-white mb-2 leading-tight group-hover:text-white transition-colors">{item.label}</h3>
+                    <p className="font-dm text-[12px] text-white/40 group-hover:text-white/80 transition-colors leading-[1.5] mb-4">{item.sub}</p>
+                    <span className="font-dm text-[11px] uppercase tracking-[2px] text-salmon group-hover:text-white inline-flex items-center gap-1 transition-colors duration-300">
+                      Explore →
+                    </span>
+                  </Link>
+                  {/* Subcategory chips - visible on hover (desktop) or always (mobile) */}
+                  {item.subcategories && (
+                    <div className="flex flex-wrap gap-2 mt-3 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300">
+                      {item.subcategories.map((sub) => (
+                        <Link
+                          key={sub.path}
+                          to={sub.path}
+                          className="font-dm text-[11px] px-3 py-1.5 rounded-full bg-white/10 text-white/70 hover:bg-salmon hover:text-white transition-colors duration-200"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </ScrollReveal>
             ))}
           </div>
@@ -352,6 +513,58 @@ export default function Home() {
             >
               Explore Our Coffee →
             </Link>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ─── VIDEO EDITORIAL ─────────────────────────────────────────────── */}
+      <section className="bg-offwhite py-20 md:py-32">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+          <ScrollReveal>
+            <p className="font-dm text-[11px] uppercase tracking-[4px] text-salmon mb-3">The Engineering of Extraction</p>
+            <h2 className="font-outfit font-bold text-[38px] md:text-[56px] text-nearblack leading-tight mb-6" style={{ letterSpacing: '-0.02em' }}>
+              Every variable matters.<br />Every second counts.
+            </h2>
+            <p className="font-dm text-[16px] text-nearblack/60 max-w-[560px] leading-[1.7] mb-14">
+              A three-minute journey through the physics of the perfect espresso — pressure, temperature, and the geometry of the burr.
+            </p>
+          </ScrollReveal>
+
+          {/* Custom video player */}
+          <ScrollReveal>
+            <div className="relative rounded-3xl overflow-hidden bg-nearblack" style={{ aspectRatio: '16/9' }}>
+              {/* Placeholder video image */}
+              <img
+                src="https://images.unsplash.com/photo-1511920121047-6b38ba6c8480?w=1400&q=80"
+                alt="Coffee extraction video"
+                className="w-full h-full object-cover opacity-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-nearblack/60 via-transparent to-nearblack/20" />
+
+              {/* Play button */}
+              <button className="absolute inset-0 flex items-center justify-center group">
+                <div className="relative">
+                  {/* Outer ring animation */}
+                  <div className="absolute inset-0 rounded-full bg-salmon/20 scale-[1.3] group-hover:scale-[1.5] transition-transform duration-500" />
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-salmon flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" style={{ borderLeftWidth: 22 }} />
+                  </div>
+                </div>
+              </button>
+
+              {/* Bottom info bar */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 flex items-end justify-between gap-6">
+                <div>
+                  <p className="font-dm text-[11px] uppercase tracking-[3px] text-salmon mb-1">Now Playing</p>
+                  <h3 className="font-outfit font-semibold text-[20px] md:text-[24px] text-white">The Extraction Equation</h3>
+                  <p className="font-dm text-[13px] text-white/50 mt-1">Duration: 3:14</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-salmon animate-pulse" />
+                  <span className="font-dm text-[11px] uppercase tracking-[2px] text-white/60">Press to Play</span>
+                </div>
+              </div>
+            </div>
           </ScrollReveal>
         </div>
       </section>

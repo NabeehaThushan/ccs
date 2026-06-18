@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { allMachines } from '../data/products';
@@ -54,9 +55,15 @@ export default function MachineCategory() {
   const cat = pathname.split('/').pop() as 'commercial' | 'multi-use' | 'home';
   const meta = META[cat ?? ''];
 
+  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+
   const filtered = allMachines.filter((m) => m.machineType === cat);
 
   const brands = [...new Set(filtered.map((m) => m.brand))];
+
+  const displayed = activeBrand
+    ? filtered.filter((m) => m.brand === activeBrand)
+    : filtered;
 
   if (!meta) {
     return (
@@ -86,31 +93,82 @@ export default function MachineCategory() {
         </div>
       </section>
 
-      {/* Products by brand */}
+      {/* Brand filter pills + Products */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1200px] mx-auto px-6 md:px-10">
-          {brands.map((brand) => {
-            const brandMachines = filtered.filter((m) => m.brand === brand);
-            return (
-              <div key={brand} className="mb-16 md:mb-24">
-                <div className="mb-8 md:mb-12">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-[3px] bg-salmon rounded-full" />
-                    <span className="font-dm text-[11px] uppercase tracking-[3px] text-salmon">Brand</span>
+          {/* Brand filter pills */}
+          <div className="flex flex-wrap items-center gap-3 mb-12">
+            <span className="font-dm text-[11px] uppercase tracking-[2px] text-midtone mr-2">Filter by brand</span>
+            <button
+              onClick={() => setActiveBrand(null)}
+              className={`font-dm text-[12px] px-4 py-2 rounded-full transition-all duration-200 ${
+                activeBrand === null
+                  ? 'bg-salmon text-white'
+                  : 'bg-stone/50 text-midtone hover:bg-stone hover:text-nearblack'
+              }`}
+            >
+              All
+            </button>
+            {brands.map((brand) => (
+              <button
+                key={brand}
+                onClick={() => setActiveBrand(brand)}
+                className={`font-dm text-[12px] px-4 py-2 rounded-full transition-all duration-200 ${
+                  activeBrand === brand
+                    ? 'bg-salmon text-white'
+                    : 'bg-stone/50 text-midtone hover:bg-stone hover:text-nearblack'
+                }`}
+              >
+                {brand}
+              </button>
+            ))}
+          </div>
+
+          {/* Products grid */}
+          {!activeBrand ? (
+            // Show all brands grouped
+            brands.map((brand) => {
+              const brandMachines = filtered.filter((m) => m.brand === brand);
+              return (
+                <div key={brand} className="mb-16 md:mb-24">
+                  <div className="mb-8 md:mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-[3px] bg-salmon rounded-full" />
+                      <span className="font-dm text-[11px] uppercase tracking-[3px] text-salmon">Brand</span>
+                    </div>
+                    <div className="flex items-baseline gap-4 pb-4 border-b border-stone">
+                      <h2 className="font-outfit text-[36px] md:text-[48px] font-semibold text-nearblack">{brand}</h2>
+                      <span className="font-dm text-[13px] text-midtone">{brandMachines.length} model{brandMachines.length !== 1 ? 's' : ''}</span>
+                    </div>
                   </div>
-                  <div className="flex items-baseline gap-4 pb-4 border-b border-stone">
-                    <h2 className="font-outfit text-[36px] md:text-[48px] font-semibold text-nearblack">{brand}</h2>
-                    <span className="font-dm text-[13px] text-midtone">{brandMachines.length} model{brandMachines.length !== 1 ? 's' : ''}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {brandMachines.map((machine) => (
+                      <ProductCard key={machine.id} product={machine} />
+                    ))}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {brandMachines.map((machine) => (
-                    <ProductCard key={machine.id} product={machine} />
-                  ))}
+              );
+            })
+          ) : (
+            // Show filtered brand
+            <div>
+              <div className="mb-8 md:mb-12">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-[3px] bg-salmon rounded-full" />
+                  <span className="font-dm text-[11px] uppercase tracking-[3px] text-salmon">Brand</span>
+                </div>
+                <div className="flex items-baseline gap-4 pb-4 border-b border-stone">
+                  <h2 className="font-outfit text-[36px] md:text-[48px] font-semibold text-nearblack">{activeBrand}</h2>
+                  <span className="font-dm text-[13px] text-midtone">{displayed.length} model{displayed.length !== 1 ? 's' : ''}</span>
                 </div>
               </div>
-            );
-          })}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {displayed.map((machine) => (
+                  <ProductCard key={machine.id} product={machine} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
